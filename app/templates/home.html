@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>English-to-Thai Translator</title>
+{% endblock %}
+
+{% block body %}
+<div class="content">
+    <div class="query_box">
+        <h3 class="web_title">English-to-Thai Translator</h3>
+        <form action="/" method="POST">
+            <label for="Prompt">Prompt:</label>
+            <br>
+            <div class="prompt_inner">
+                <input type="text" name="prompt" id="fill_in" required="required">
+            </div>
+            <input id="submit" type="submit" value="Submit">
+        </form>
+    </div>
+
+    <h4 style="display: {{ show_text }}">Output:</h4>
+    <p style="display: {{ show_text }}">{{ output }}</p>
+
+</div>
+{% endblock %}
