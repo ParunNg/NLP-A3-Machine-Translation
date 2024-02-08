@@ -42,4 +42,4 @@ Based on these results, we concluded that the transformer model with additive at
 4) Type in the English text you wish to be translated then click the submit button.
 5) Your generated text will be shown below.
 
-![demonstration](./figures/app_demonstrate.png)
+![demonstration](./figures/app_demonstration.png)
