@@ -31,11 +31,6 @@ body {
     border: 1px solid;
 }
 
-.query_box_child {
-    width: 33%;
-    float: left;
-    margin-top: 5px;
-}
 
 #fill_in {
     width: 100%;
@@ -49,10 +44,6 @@ body {
 
 .prompt_inner {
     padding-right: 10px
-}
-
-.misc_inner {
-    padding-right: 4%
 }
 
 form {
