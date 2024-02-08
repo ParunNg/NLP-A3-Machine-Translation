@@ -26,7 +26,7 @@ class EncoderLayer(nn.Module):
         return src
     
 class Encoder(nn.Module):
-    def __init__(self, input_dim, hid_dim, n_layers, n_heads, pf_dim, dropout, attn_variant, device, max_length = 500):
+    def __init__(self, input_dim, hid_dim, n_layers, n_heads, pf_dim, dropout, attn_variant, device, max_length = 500, **kwargs):
         super().__init__()
         self.device = device
         self.attn_variant = attn_variant
@@ -56,7 +56,7 @@ class Encoder(nn.Module):
         #src: [batch_size, src_len, hid_dim]
         
         return src
-            
+
 # Default Transformer attention variant
 class ScaledAttention(nn.Module):
     def __init__(self, head_dim):
@@ -159,8 +159,7 @@ class MultiHeadAttentionLayer(nn.Module):
             energy = self.additive_attention(Q, K)
             
         else:
-            raise Exception("Incorrect value for attention variant. Must be one of the following: \
-                            scaled, general, multiplicative, additive")
+            raise Exception("Incorrect value for attention variant. Must be one of the following: scaled, general, multiplicative, additive")
         
         #for making attention to padding to 0
         if mask is not None:
@@ -184,7 +183,6 @@ class MultiHeadAttentionLayer(nn.Module):
         
         return x, attention
         
-
 class PositionwiseFeedforwardLayer(nn.Module):
     def __init__(self, hid_dim, pf_dim, dropout):
         super().__init__()
@@ -234,7 +232,7 @@ class DecoderLayer(nn.Module):
     
 class Decoder(nn.Module):
     def __init__(self, output_dim, hid_dim, n_layers, n_heads, 
-                 pf_dim, dropout, attn_variant, device, max_length = 500):
+                 pf_dim, dropout, attn_variant, device, max_length = 500, **kwargs):
         super().__init__()
         self.device = device
         self.tok_embedding = nn.Embedding(output_dim, hid_dim)
@@ -271,18 +269,15 @@ class Decoder(nn.Module):
         #output = [batch_size, trg len, output_dim]
         
         return output, attention
-
+    
 class Seq2SeqTransformer(nn.Module):
-    def __init__(self, encoder, decoder, src_pad_idx, trg_pad_idx, device):
+    def __init__(self, encoder, decoder, src_pad_idx, trg_pad_idx, trg_eos_idx, device, **kwargs):
         super().__init__()
-        # store the input parameters so we can retrive them later for model inferencing
-        self.params = {'encoder': encoder, 'decoder': decoder,
-                       'src_pad_idx': src_pad_idx,
-                       'trg_pad_idx': trg_pad_idx}
         self.encoder = encoder
         self.decoder = decoder
         self.src_pad_idx = src_pad_idx
         self.trg_pad_idx = trg_pad_idx
+        self.trg_eos_idx = trg_eos_idx
         self.device = device
         
     def make_src_mask(self, src):
@@ -348,7 +343,7 @@ class Seq2SeqTransformer(nn.Module):
                 pred_token = output.argmax(2)[:, -1].unsqueeze(1)
                 trg = torch.cat((trg, pred_token), dim=1)
 
-                if pred_token.item() == self.trg_pad_idx:
+                if pred_token.item() == self.trg_eos_idx:
                     break
 
             return trg[:, 1:]

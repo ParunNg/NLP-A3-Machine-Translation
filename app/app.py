@@ -33,10 +33,8 @@ def index():
         prompt = request.form['prompt'].lower()
         tokenized_prompt = ['<sos>'] + tokenizer(prompt) + ['<eos>']  # tokenize then concatenate special tags to the start and end of list
         num_tokens = vocab_transform(tokenized_prompt)  # convert to numerical representations
-        print(num_tokens)
         model_input = torch.tensor(num_tokens, dtype=torch.int64).reshape(1, -1).to(device)  # prepare model input
         model_output = model.generate(model_input)[0]
-        print(model_output)
         translation = [mapping[token.item()] for token in model_output]
 
         return render_template('home.html', output=' '.join(translation), show_text="block")
